@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <title>Spring Boot Project</title>
+    <title>Product Management System</title>
     <style>
         * {
             margin: 0;
@@ -14,338 +13,469 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* Header Styles */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .brand-section {
-            text-align: center;
-            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .brand-title {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 0;
+        .header.scrolled {
+            background: rgba(0, 0, 0, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        /* Brand Logo */
+        .brand {
+            display: flex;
+            align-items: center;
             gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .brand:hover {
+            transform: scale(1.05);
         }
 
         .brand-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
 
-        .navbar {
+        .brand-text {
+            background: linear-gradient(135deg, #ffffff, #cccccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0;
+            margin: 0;
             padding: 0;
         }
 
-        .navbar ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 0;
-        }
-
-        .navbar li {
+        .nav-item {
             position: relative;
         }
 
-        .navbar a {
+        .nav-link {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 16px 24px;
-            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             font-weight: 500;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
-            border-radius: 0;
+            border-radius: 8px;
+            margin: 0 4px;
         }
 
-        .navbar a::before {
+        .nav-link::before {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -8px;
             left: 50%;
             width: 0;
-            height: 3px;
-            background: white;
-            transition: all 0.3s ease;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform: translateX(-50%);
+            border-radius: 1px;
         }
 
-        .navbar a:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
+        .nav-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
         }
 
-        .navbar a:hover::before {
+        .nav-link:hover::before {
             width: 80%;
         }
 
-        .navbar a.active {
-            color: white;
-            background: rgba(255, 255, 255, 0.15);
+        .nav-link.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .navbar a.active::before {
+        .nav-link.active::before {
             width: 80%;
         }
 
         .nav-icon {
             font-size: 1rem;
-            opacity: 0.8;
+            opacity: 0.9;
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-toggle span {
+            width: 25px;
+            height: 2px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            border-radius: 1px;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Content Area */
+        .content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #cccccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4);
         }
 
         /* Responsive Design */
-        .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 15px;
-            position: absolute;
-            right: 20px;
-            top: 20px;
-        }
-
         @media (max-width: 768px) {
             .mobile-toggle {
-                display: block;
+                display: flex;
             }
 
-            .navbar {
-                position: relative;
+            .nav-container {
+                padding: 0 1rem;
+                height: 70px;
             }
 
-            .navbar ul {
-                flex-direction: column;
+            .nav-menu {
                 position: absolute;
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                transform: translateY(-100%);
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
                 opacity: 0;
                 visibility: hidden;
-                transition: all 0.3s ease;
+                transform: translateY(-20px);
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             }
 
-            .navbar ul.active {
-                transform: translateY(0);
+            .nav-menu.active {
                 opacity: 1;
                 visibility: visible;
+                transform: translateY(0);
             }
 
-            .navbar li {
+            .nav-item {
                 width: 100%;
             }
 
-            .navbar a {
-                padding: 16px 24px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            .nav-link {
+                padding: 20px 2rem;
+                margin: 0;
+                border-radius: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
                 justify-content: flex-start;
             }
 
-            .navbar a::before {
+            .nav-link::before {
                 display: none;
             }
 
-            .navbar a:hover {
-                background: rgba(255, 255, 255, 0.1);
-                padding-left: 32px;
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.08);
+                transform: none;
+                padding-left: 2.5rem;
             }
 
-            .brand-section {
-                position: relative;
+            .brand {
+                font-size: 1.3rem;
+            }
+
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .content {
+                margin-top: 70px;
+                min-height: calc(100vh - 70px);
+                padding: 2rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
             }
         }
 
-        /* Content area styling */
-        .content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        /* Smooth animations */
+        .nav-link {
+            animation: slideInUp 0.6s ease-out;
+            animation-delay: calc(var(--i) * 0.1s);
+            animation-fill-mode: both;
         }
 
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Loading animation */
-        .navbar {
-            animation: slideDown 0.6s ease-out;
-        }
-
-        @keyframes slideDown {
+        @keyframes slideInUp {
             from {
-                transform: translateY(-100%);
                 opacity: 0;
+                transform: translateY(30px);
             }
             to {
-                transform: translateY(0);
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Hover effects for better UX */
-        .navbar li:hover {
-            transform: translateY(-2px);
-            transition: transform 0.2s ease;
+        /* Floating animation for brand icon */
+        .brand-icon {
+            animation: float 3s ease-in-out infinite;
         }
 
-        @media (max-width: 768px) {
-            .navbar li:hover {
-                transform: none;
-            }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
         }
     </style>
 </head>
-
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="brand-section">
-                <h2 class="brand-title">
-                    <div class="brand-icon">
-                        <i class="fas fa-cube"></i>
-                    </div>
-                    Product Management System
-                </h2>
-                <button class="mobile-toggle" id="mobileToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            
-            <nav class="navbar">
-                <ul id="navMenu">
-                    <li>
-                        <a href="/" class="active">
+    <header class="header" id="header">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <span class="brand-text">Product Management</span>
+            </a>
+
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" style="--i: 0">
                             <i class="fas fa-home nav-icon"></i>
                             Home
                         </a>
                     </li>
-                    <li>
-                        <a href="addproduct">
+                    <li class="nav-item">
+                        <a href="addproduct" class="nav-link" style="--i: 1">
                             <i class="fas fa-plus-circle nav-icon"></i>
                             Add Product
                         </a>
                     </li>
-                    <li>
-                        <a href="viewallprods">
+                    <li class="nav-item">
+                        <a href="viewallprods" class="nav-link" style="--i: 2">
                             <i class="fas fa-list nav-icon"></i>
-                            View All Products
+                            View All
                         </a>
                     </li>
-                    <li>
-                        <a href="viewproductbyid">
+                    <li class="nav-item">
+                        <a href="viewproductbyid" class="nav-link" style="--i: 3">
                             <i class="fas fa-search nav-icon"></i>
                             View By ID
                         </a>
                     </li>
-                    <li>
-                        <a href="viewproductsbycategory">
+                    <li class="nav-item">
+                        <a href="viewproductsbycategory" class="nav-link" style="--i: 4">
                             <i class="fas fa-tags nav-icon"></i>
-                            View By Category
+                            Categories
                         </a>
                     </li>
                 </ul>
             </nav>
+
+            <button class="mobile-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
 
-    <div class="content">
-        <!-- Your page content goes here -->
-        <p style="text-align: center; color: #64748b; font-size: 1.1rem; margin-top: 40px;">
-            Welcome to your Product Management System. Use the navigation above to manage your products.
-        </p>
-    </div>
+    <main class="content">
+        <div class="hero-content">
+            <h1 class="hero-title">Product Management System</h1>
+            <p class="hero-subtitle">
+                Streamline your product workflow with our comprehensive management solution. 
+                Add, view, search, and organize your products with ease.
+            </p>
+            <a href="addproduct" class="cta-button">
+                <i class="fas fa-plus-circle"></i>
+                Get Started
+            </a>
+        </div>
+    </main>
 
     <script>
         // Mobile menu toggle
         const mobileToggle = document.getElementById('mobileToggle');
         const navMenu = document.getElementById('navMenu');
-        
+        const header = document.getElementById('header');
+
         mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
             navMenu.classList.toggle('active');
-            
-            // Change icon
-            const icon = this.querySelector('i');
-            if (navMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
         });
 
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!e.target.closest('.navbar') && !e.target.closest('.mobile-toggle')) {
+            if (!e.target.closest('.nav') && !e.target.closest('.mobile-toggle')) {
                 navMenu.classList.remove('active');
-                const icon = mobileToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                mobileToggle.classList.remove('active');
             }
         });
 
-        // Highlight active page
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Active link highlighting
         const currentPath = window.location.pathname;
-        const navLinks = document.querySelectorAll('.navbar a');
+        const navLinks = document.querySelectorAll('.nav-link');
         
         navLinks.forEach(link => {
             link.classList.remove('active');
-            if (link.getAttribute('href') === currentPath || 
-                (currentPath === '/' && link.getAttribute('href') === '/')) {
+            const linkPath = link.getAttribute('href');
+            if (linkPath === currentPath || 
+                (currentPath === '/' && linkPath === '/')) {
                 link.classList.add('active');
             }
         });
 
-        // Smooth hover effects
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-            
-            link.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
+        });
+
+        // Add stagger animation to nav items
+        const navItems = document.querySelectorAll('.nav-link');
+        navItems.forEach((item, index) => {
+            item.style.setProperty('--i', index);
         });
     </script>
 </body>
-
 </html>
